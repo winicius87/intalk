@@ -2,10 +2,14 @@
      "name": "intalk",
      "description": "chat application",
      "version": "0.0.2",
+     "engines": {
+       "node": "4.2.6",
+       "npm": "3.5.2"
+     }
      "dependencies": {
-        "express": "",
-        "socket.io": "",
-	"http" : "",
-	"https" : ""
+        "express": "latest",
+        "socket.io": "latest",
+	"http" : "latest",
+	"https" : "latest"
      }
 }
