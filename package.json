@@ -1,13 +1,17 @@
 {
      "name": "intalk",
      "description": "chat application",
-     "version": "0.0.2",
+     "version": "0.0.3",
      "engines": {
        "node": "4.2.6",
        "npm": "3.5.2"
      },
      "scripts": {
        "start": "node server.js"
+     },
+     "repository": {
+       "type": "git",
+       "url": "https://git.heroku.com/intalk.git"
      },
      "dependencies": {
         "express": "latest",
