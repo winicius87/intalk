@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Winicius Chat</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+  $( function() {
+    $( "#rooms" ).tabs();
+  } );
+</script>
+ 
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect('http://localhost:80');
+
+	socket.on('connect', function(){
+		socket.emit('adduser', prompt("What's your name?"));
+		$('#data').focus();
+	});
+
+	socket.on('updatechat', function (username, data) {
+		$('#conversation').append('<b>'+username + ':</b> ' + data + '<br>');
+		scrollToBottom();
+	});
+
+	socket.on('updaterooms', function(rooms, current_room) {
+		$('#rooms ul').empty();
+		$.each(rooms, function(key, value) {
+			if(value == current_room){
+$('#rooms ul').append('<li><a href=\'#'+value+'\'>' + value + '</a></li>');
+			}
+			else {
+$('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+'\')">' + value + '</a></div>');
+			}
+		});
+
+		$('#rooms').tabs("refresh");
+	});
+
+	function switchRoom(room){
+		socket.emit('switchRoom', room);
+		$('#data').focus();
+	}
+	
+	// on load of page
+	$(function(){
+		// when the client clicks SEND
+		$('#datasend').click( function() {
+			var message = $('#data').val();
+			$('#data').val('');
+			socket.emit('sendchat', message);
+		});
+
+		// when the client hits ENTER on their keyboard
+		$('#data').keypress(function(e) {
+			if(e.which == 13) {
+				$('#datasend').click();
+			}
+		});
+	});
+
+function scrollToBottom(){
+	$('#conversation').animate({ 
+	   scrollTop: $('#conversation')[0].scrollHeight}, 
+	   1400, 
+	   "easeOutQuint"
+	);
+}
+
+</script>
+</head>
+<body>
+
+<div id="rooms">
+  <ul>
+    <li><a href="#tabs-1">Global</a></li>
+    <li><a href="#tabs-3">Information</a></li>
+  </ul>
+</div>
+
+<div id="room1">
+
+	<div style="padding:10px;">
+		<div style="height:200px;overflow:auto;overflow-style:scrollbar;" id="conversation"></div>
+	</div>
+</div>
+<div>
+	<input id="data" style="width:200px;"/>
+	<input id="datasend" type="button" value="send" />
+</div>
+
+
+</body>
+</html>
