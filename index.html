@@ -7,16 +7,16 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="/js/sjcl.js">
 <script>
   $( function() {
     $( "#rooms" ).tabs();
   } );
 </script>
- 
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-	//var socket = io.connect('http://localhost:80');
 	var socket = io();
 
 	socket.on('connect', function(){
@@ -25,7 +25,18 @@
 	});
 
 	socket.on('updatechat', function (username, data) {
-		$('#conversation').append('<b>'+username + ':</b> ' + data + '<br>');
+		$('#conversation').append('<div class="row"><b>'+username +
+		   ':</b><span>' + data + '</span>' +
+		   '<span class="decrypt">Decrypt</span>'+
+		   '<br/></div>');
+
+		$('.row').last().find('.decrypt').click();
+		var row_count = $('.row').size();
+		//encrypts rows older than the first 5 rows
+		if(row_count > 5){
+			var el = $('.row').get(row_count-5);
+			$(el).find('.encrypt').click();
+		}
 		scrollToBottom();
 	});
 
@@ -48,12 +59,16 @@ $('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+
 		$('#data').focus();
 	}
 	
-	// on load of page
+	// on page ready
 	$(function(){
 		// when the client clicks SEND
 		$('#datasend').click( function() {
 			var message = $('#data').val();
 			$('#data').val('');
+			
+			var pw = $('#password').val();
+			
+			message = sjcl.encrypt(pw, message);
 			socket.emit('sendchat', message);
 		});
 
@@ -63,17 +78,43 @@ $('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+
 				$('#datasend').click();
 			}
 		});
+
+		//
+		$(document).on('click','.decrypt', function() {
+			$(this).addClass('encrypt');
+			$(this).text('Encrypt');
+			$(this).removeClass('decrypt');
+			var emessage = $( this ).prev().text();
+			var pw = $('#password').val();
+			var message = sjcl.decrypt(pw, emessage);
+			$( this ).prev().text(message);
+			
+		});
+		$(document).on('click','.encrypt', function() {
+			$(this).addClass('decrypt');
+			$(this).text('Decrypt');
+			$(this).removeClass('encrypt');
+			var message = $( this ).prev().text();
+			var pw = $('#password').val();
+			var emessage = sjcl.encrypt(pw, message);
+			$( this ).prev().text(emessage);
+			
+		});
 	});
 
 function scrollToBottom(){
 	$('#conversation').animate({ 
 	   scrollTop: $('#conversation')[0].scrollHeight}, 
-	   1400, 
+	   400, 
 	   "easeOutQuint"
 	);
 }
 
 </script>
+
+<style>
+.decrypt, .encrypt {float:right; clear:right; background:yellow;color:green;font-weight:bold}
+</style>
 </head>
 <body>
 
@@ -91,7 +132,9 @@ function scrollToBottom(){
 	</div>
 </div>
 <div>
-	<input id="data" style="width:200px;"/>
+	<input id="password" style="width:200px;" placeholder="password" type="text" value="abc"/>
+	<br/>
+	<input id="data" style="width:200px;" placeholder="Write here and press enter."/>
 	<input id="datasend" type="button" value="send" />
 </div>
 

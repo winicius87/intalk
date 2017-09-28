@@ -7,6 +7,11 @@ var express = require('express')
 var port = process.env.PORT || 80;
 server.listen(port);
 
+
+app.use('/js',express.static(__dirname + '/public/js'));
+app.use('/css',express.static(__dirname + '/public/css'));
+//app.use(express.static(__dirname + '/public'));
+
 // routing
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
