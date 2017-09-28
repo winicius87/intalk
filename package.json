@@ -6,5 +6,6 @@
         "express": "",
         "socket.io": "",
 	"http" : ""
+	"https" : ""
      }
 }
