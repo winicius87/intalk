@@ -102,7 +102,7 @@ $('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+
 		});
 		// Bind to the resize event of the window object
 		$(window).on("resize", function () {
-    $("#conversation").height($(document).height() - $('#rooms').height() - $('#dialog').height()-20 );
+    $("#conversation").height($(document).height() - $('#rooms').height() - $('#dialog').height()-60 );
 		}).trigger('resize');
 		// Invoke the resize event onload
 	});
