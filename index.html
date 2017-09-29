@@ -9,9 +9,6 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="/js/sjcl.js">
 <script>
-  $( function() {
-    $( "#rooms" ).tabs();
-  } );
 </script>
 
 
@@ -61,6 +58,8 @@ $('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+
 	
 	// on page ready
 	$(function(){
+		//initialize tabs
+    		$( "#rooms" ).tabs();
 		// when the client clicks SEND
 		$('#datasend').click( function() {
 			var message = $('#data').val();
