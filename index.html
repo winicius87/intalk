@@ -33,8 +33,8 @@
 		$('.row').last().find('.decrypt').click();
 		var row_count = $('.row').size();
 		//encrypts rows older than the first 5 rows
-		if(row_count > 5){
-			var el = $('.row').get(row_count-5);
+		if(row_count > 22){
+			var el = $('.row').get(row_count-22);
 			$(el).find('.encrypt').click();
 		}
 		scrollToBottom();
@@ -100,7 +100,13 @@ $('#rooms ul').append('<li><a href=\'#'+value+'\' onclick="switchRoom(\''+value+
 			$( this ).prev().text(emessage);
 			
 		});
+		// Bind to the resize event of the window object
+		$(window).on("resize", function () {
+    $("#conversation").height($(document).height() - $('#rooms').height() - $('#dialog').height()-20 );
+		}).trigger('resize');
+		// Invoke the resize event onload
 	});
+
 
 function scrollToBottom(){
 	$('#conversation').animate({ 
@@ -126,12 +132,11 @@ function scrollToBottom(){
 </div>
 
 <div id="room1">
-
 	<div style="padding:10px;">
-		<div style="height:200px;overflow:auto;overflow-style:scrollbar;" id="conversation"></div>
+	<div style="height:100%;overflow:auto;overflow-style:scrollbar;" id="conversation"></div>
 	</div>
 </div>
-<div>
+<div id="dialog">
 	<input id="password" style="width:200px;" placeholder="password" type="text" value="abc"/>
 	<br/>
 	<input id="data" style="width:200px;" placeholder="Write here and press enter."/>
